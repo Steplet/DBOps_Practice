@@ -44,9 +44,6 @@ jobs:
         tar -xzf flyway-commandline.tar.gz
         sudo ln -s `pwd`/flyway-11.1.0/flyway /usr/local/bin/flyway
     
-    - name: Install PostgreSQL Client
-      run: sudo apt-get install -y postgresql-client
-
     # Проверяем, что Postgres работает и доступен перед выполнением миграций, чтобы избежать ошибок подключения
     - name: Wait for Postgres
       run: until pg_isready -h localhost -p 5432; do sleep 1; done
@@ -58,6 +55,9 @@ jobs:
         FLYWAY_USER: testuser
         FLYWAY_PASSWORD: testpassword
       run: flyway migrate -locations=filesystem:sql/migrations
+      
+    - name: Install PostgreSQL Client
+      run: sudo apt-get install -y postgresql-client
     
     - name: Run SELECT query
       run: |
