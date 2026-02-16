@@ -43,6 +43,9 @@ jobs:
         curl -L -o flyway-commandline.tar.gz "https://repo1.maven.org/maven2/org/flywaydb/flyway-commandline/11.1.0/flyway-commandline-11.1.0-linux-x64.tar.gz"
         tar -xzf flyway-commandline.tar.gz
         sudo ln -s `pwd`/flyway-11.1.0/flyway /usr/local/bin/flyway
+    
+    - name: Install PostgreSQL Client
+      run: sudo apt-get install -y postgresql-client
 
     # Проверяем, что Postgres работает и доступен перед выполнением миграций, чтобы избежать ошибок подключения
     - name: Wait for Postgres
@@ -55,3 +58,7 @@ jobs:
         FLYWAY_USER: testuser
         FLYWAY_PASSWORD: testpassword
       run: flyway migrate -locations=filesystem:sql/migrations
+    
+    - name: Run SELECT query
+      run: |
+        PGPASSWORD=testpassword psql -h localhost -U testuser -d testdb -c "SELECT * FROM flyway_schema_history;" 
